@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html style="min-width:167px;">
+    <head>
+        <script src="popup.js"></script>
+    </head>
+    <body>
+        <h3>Input chance as %<br/>(1 = 1%)<br/>or as division x/y<br/>eg. 1/100</h3>
+        <div>        
+            <span>Chance</span>
+            <input type="string" id="input-chance" value=0 title="Chance">
+        </div>
+        <div>
+            <span>Runs</span>
+            <input type="number" min=0 id="input-runs" value=0 title="Runs">
+        </div>
+        <button margin-top=100px; id="calculate-chance-button">Calculate</button>
+        <p id="chance-info">0%</p>
+    </body>
+</html>
