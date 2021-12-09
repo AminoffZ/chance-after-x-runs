@@ -9,6 +9,10 @@ function saveRuns(runs) {
 }
 
 function setCalculationInfo(calculation) {
+    if (calculation.match("%")) {
+        const color = getColor(parseFloat(calculation.split("%")[0]));
+        document.getElementById("chance-info").style.color = `rgb(${color[0]},${color[1]},${color[2]})`;
+    }
     document.getElementById("chance-info").innerHTML = calculation;
 }
 
@@ -20,12 +24,25 @@ function getRuns() {
     return document.getElementById("input-runs").value;
 }
 
+function setChance(value) {
+    document.getElementById("input-chance").value = value;
+}
+
+function setRuns(value) {
+    document.getElementById("input-runs").value = value;
+}
+
 function calculate() {
     let chance = getChance();
     const runs = getRuns();
-    if (chance === "0" || !runs === "0") {
+    if (chance === "0" || runs === "0") {
         setTimeout(setCalculation, 100);
         return;
+    } 
+    if (!chance || !runs) {
+        setChance("0");
+        setRuns("0");
+        return "0%";
     }
     if(chance.match("/")) {
         chance = parseFloat(chance.split("/")[0] / parseFloat(chance.split("/")[1]));
@@ -33,36 +50,38 @@ function calculate() {
         chance = parseFloat(chance)/100;
     }
     // 1 - ( ( 1 - chance ) ^ runs )
-    const calculation = (1-(Math.pow(1-chance, parseInt(runs))))*100;
+    let calculation = (1-(Math.pow(1-chance, parseInt(runs))))*100;
     if(!calculation || calculation<0) {
         return "Invalid Input";
     } else if (calculation>100) {
         return "100%"
+    } else {
+        calculation = calculation.toFixed(3);
     }
     return `${calculation}%`;
 }
 
 function setCalculation() {
     const calculation = calculate();
-    setCalculationInfo(calculation);
+    if (calculation) {
+        setCalculationInfo(calculation);
+    }
 }
 
 function getSaved() {
     chrome.storage.sync.get(['input-chance'], function(result) {
-        const inputChance = document.getElementById("input-chance");
         if (Object.entries(result).length>0) {
-            inputChance.value = result["input-chance"]["chance"];
+            setChance(result["input-chance"]["chance"]);
         } else {
-            inputChance.value = 0;
+            setChance(null);
         }
     });
     
     chrome.storage.sync.get(['input-runs'], function(result) {
-        const inputRuns = document.getElementById("input-runs");
         if (Object.entries(result).length>0) {
-            inputRuns.value = parseInt(result["input-runs"]["runs"]);
+            setRuns(result["input-runs"]["runs"]);
         } else {
-            inputRuns.value = 0;
+            setRuns(null);
         }
     });
 }

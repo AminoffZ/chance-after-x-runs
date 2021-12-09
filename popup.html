@@ -1,19 +1,24 @@
 <!DOCTYPE html>
-<html style="min-width:167px;">
+<html>
     <head>
+        <link rel="stylesheet" href="styles.css">
+        <script src="gradient.js"></script>
         <script src="popup.js"></script>
     </head>
     <body>
-        <h3>Input chance as %<br/>(1 = 1%)<br/>or as division x/y<br/>eg. 1/100</h3>
-        <div>        
-            <span>Chance</span>
-            <input type="string" id="input-chance" value=0 title="Chance">
+        <div id="container" >
+            <div id="chance">        
+                <span>Chance</span>
+                <input type="string" id="input-chance" value=0>
+            </div>
+            <div id="runs">
+                <span>Runs</span>
+                <input type="string" id="input-runs" value=0>
+            </div>
+            <div id="calculate">
+                <button id="calculate-chance-button">Calculate</button>
+                <p id="chance-info">0%</p>
+            </div>
         </div>
-        <div>
-            <span>Runs</span>
-            <input type="number" min=0 id="input-runs" value=0 title="Runs">
-        </div>
-        <button margin-top=100px; id="calculate-chance-button">Calculate</button>
-        <p id="chance-info">0%</p>
     </body>
 </html>
