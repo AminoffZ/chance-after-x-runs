@@ -1,10 +1,8 @@
 function saveChance(chance) {
-    localStorage.setItem("saved-chance", chance);
     chrome.storage.sync.set({"input-chance": {"chance": chance}});
 }
 
 function saveRuns(runs) {
-    localStorage.setItem("saved-runs", runs);
     chrome.storage.sync.set({"input-runs": {"runs": runs}});
 }
 
@@ -13,7 +11,7 @@ function setCalculationInfo(calculation) {
         const color = getColor(parseFloat(calculation.split("%")[0]));
         document.getElementById("chance-info").style.color = `rgb(${color[0]},${color[1]},${color[2]})`;
     }
-    document.getElementById("chance-info").innerHTML = calculation;
+    document.getElementById("chance-info").textContent = calculation;
 }
 
 function getChance() {
