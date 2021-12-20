@@ -30,14 +30,21 @@ function setRuns(value) {
     document.getElementById("input-runs").value = value;
 }
 
+function removeCommas(text) {
+    return text.replaceAll(",","");
+}
+
 function formatChance(chance) {
     let formatChance = chance;
     if (formatChance.match("/")) {
         if (formatChance.match(",")) {
-            formatChance = formatChance.replaceAll(",","");
+            formatChance = removeCommas(formatChance);
         }
         formatChance = parseFloat(formatChance.split("/")[0] / parseFloat(formatChance.split("/")[1]));
     } else if (formatChance.match("e")) {
+        if(formatChance.match(".")) {
+            formatChance = formatChance.replace(",",".");
+        }
         formatChance = parseFloat(formatChance.split("e-")[0]) / Math.pow(10, parseInt(formatChance.split("e-")[1]));
     } else if (formatChance.match(",")) {
         formatChance = parseFloat(formatChance.replace(",","."))/100;
@@ -50,7 +57,7 @@ function formatChance(chance) {
 function formatRuns(runs) {
     let formatRuns = runs;
     if (formatRuns.match(",")) {
-        formatRuns = formatRuns.replaceAll(",","");
+        formatRuns = removeCommas(formatRuns);
     }
     return formatRuns;
 }
