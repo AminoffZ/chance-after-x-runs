@@ -30,25 +30,42 @@ function setRuns(value) {
     document.getElementById("input-runs").value = value;
 }
 
+function formatChance(chance) {
+    let formatChance = chance;
+    if (formatChance.match("/")) {
+        if (formatChance.match(",")) {
+            formatChance = formatChance.replaceAll(",","");
+        }
+        formatChance = parseFloat(formatChance.split("/")[0] / parseFloat(formatChance.split("/")[1]));
+    } else if (formatChance.match("e")) {
+        formatChance = parseFloat(formatChance.split("e-")[0]) / Math.pow(10, parseInt(formatChance.split("e-")[1]));
+    } else if (formatChance.match(",")) {
+        formatChance = parseFloat(formatChance.replace(",","."))/100;
+    } else {
+        formatChance = parseFloat(formatChance)/100;
+    }
+    return formatChance;
+}
+
+function formatRuns(runs) {
+    let formatRuns = runs;
+    if (formatRuns.match(",")) {
+        formatRuns = formatRuns.replaceAll(",","");
+    }
+    return formatRuns;
+}
+
 function calculate() {
     let chance = getChance();
-    const runs = getRuns();
-    if (chance === "0" || runs === "0") {
-        setTimeout(setCalculation, 100);
-        return;
-    } 
-    if (!chance || !runs) {
-        setChance("0");
-        setRuns("0");
+    let runs = getRuns();
+    if (!chance || chance === "0" ||
+        !runs   || runs   === "0") {
         return "0%";
     }
-    if(chance.match("/")) {
-        chance = parseFloat(chance.split("/")[0] / parseFloat(chance.split("/")[1]));
-    } else {
-        chance = parseFloat(chance)/100;
-    }
+    chance = formatChance(chance);
+    runs = formatRuns(runs);
     // 1 - ( ( 1 - chance ) ^ runs )
-    let calculation = (1-(Math.pow(1-chance, parseInt(runs))))*100;
+    let calculation = (1-(Math.pow(1-chance, parseFloat(runs))))*100;
     if(!calculation || calculation<0) {
         return "Invalid Input";
     } else if (calculation>100) {
@@ -66,30 +83,37 @@ function setCalculation() {
     }
 }
 
-function getSaved() {
-    chrome.storage.sync.get(['input-chance'], function(result) {
-        if (Object.entries(result).length>0) {
-            setChance(result["input-chance"]["chance"]);
-        } else {
-            setChance(null);
-        }
-    });
-    
+function getSavedRuns() {
     chrome.storage.sync.get(['input-runs'], function(result) {
         if (Object.entries(result).length>0) {
             setRuns(result["input-runs"]["runs"]);
-        } else {
-            setRuns(null);
         }
+        startApp();
     });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    getSaved();
+function getSavedChance() {
+    chrome.storage.sync.get(['input-chance'], function(result) {
+        if (Object.entries(result).length>0) {
+            setChance(result["input-chance"]["chance"]);
+        }
+        getSavedRuns();
+    });
+}
+
+function getSaved() {
+    getSavedChance();
+}
+
+function startApp() {
     setCalculation();
     document.getElementById("calculate-chance-button").addEventListener("click", function() {
         setCalculation();
         saveChance(getChance());
         saveRuns(getRuns());
     });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    getSaved();    
 });
